@@ -49,9 +49,9 @@ export function normalizeRecoveryReport(raw, feature, model, provider = 'OpenRou
   if (!data.sections.every(item => item && typeof item.title === 'string' && item.title.trim() && item.detail != null)) throw invalid('The report contains invalid sections', 502);
   if (data.actions.some(item => item == null || item === '')) throw invalid('The report contains invalid actions', 502);
   const risk = ['Low', 'Moderate', 'High', 'Critical'].find(value => value.toLowerCase() === String(data.risk || '').toLowerCase()) || 'Not assessed';
-  return { ...data, headline: data.headline.trim(), executiveSummary: data.executiveSummary.trim(), risk, confidence: null, provider, model,
+  return { ...data, headline: data.headline.trim(), executiveSummary: data.executiveSummary.trim(), risk, confidence: null, provider, model, aiGenerated: provider === 'OpenRouter', source: provider === 'OpenRouter' ? 'openrouter' : 'deterministic-fallback',
     status: provider === 'OpenRouter' ? 'draft' : 'calculation',
-    disclaimer: provider === 'OpenRouter' ? 'AI draft based on the entered fields. A qualified reviewer must validate source evidence and approve any operational action. Confidence and realized financial outcomes have not been measured.' : 'Local calculation based on the entered fields and configured domain rules. Validate source evidence before making an operational decision.' };
+    disclaimer: provider === 'OpenRouter' ? 'AI draft based on the entered fields. A qualified reviewer must validate source evidence and approve any operational action. Confidence and realized financial outcomes have not been measured.' : 'Local calculation based on the entered fields and configured domain rules. Validate source evidence before making an operational decision. This is not tax advice.' };
 }
 
 export function createRecoveryAnalysisHandler({ pool, featureById, runAI, accountScoped = false, validateInputs = validateRecoveryFields, timeoutMs = 60000 }) {
